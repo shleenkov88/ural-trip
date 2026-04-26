@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>🌲 Приключенческое путешествие по Уралу • 10 дней</title>
+    <!-- Яндекс.Карты с вашим API-ключом -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=7003735c-0843-432a-a415-539663a3dd84&lang=ru_RU" type="text/javascript">
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deep-green: #1b3b2b;
+            --forest: #2d5a3f;
+            --mid-green: #4a7c59;
+            --leaf: #6b9e5e;
+            --sage: #8fb89a;
+            --pale-green: #b8d4b5;
+            --cream: #f5f0e8;
+            --sand: #e8dcc8;
+            --river-blue: #4a8fa7;
+            --bark: #5c4a3a;
+            --white: #ffffff;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--cream);
+            color: var(--deep-green);
+            line-height: 1.5;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== АНИМИРОВАННЫЙ ФОН ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+        .cloud1 {
+            width: 150px;
+            height: 45px;
+            top: 5%;
+            left: -160px;
+            animation: driftCloud 60s linear infinite;
+        }
+        .cloud1::before {
+            width: 70px;
+            height: 70px;
+            top: -35px;
+            left: 25px;
+        }
+        .cloud1::after {
+            width: 90px;
+            height: 55px;
+            top: -25px;
+            left: 60px;
+        }
+        .cloud2 {
+            width: 190px;
+            height: 55px;
+            top: 15%;
+            left: -200px;
+            animation: driftCloud 75s linear infinite 18s;
+            opacity: 0.4;
+        }
+        .cloud2::before {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            left: 35px;
+        }
+        .cloud2::after {
+            width: 110px;
+            height: 65px;
+            top: -30px;
+            left: 70px;
+        }
+        .cloud3 {
+            width: 120px;
+            height: 38px;
+            top: 3%;
+            left: -140px;
+            animation: driftCloud 55s linear infinite 30s;
+            opacity: 0.35;
+        }
+        .cloud3::before {
+            width: 55px;
+            height: 55px;
+            top: -28px;
+            left: 18px;
+        }
+        .cloud3::after {
+            width: 70px;
+            height: 50px;
+            top: -20px;
+            left: 45px;
+        }
+        .cloud4 {
+            width: 160px;
+            height: 50px;
+            top: 22%;
+            left: -190px;
+            animation: driftCloud 68s linear infinite 42s;
+            opacity: 0.3;
+        }
+        .cloud4::before {
+            width: 72px;
+            height: 72px;
+            top: -36px;
+            left: 28px;
+        }
+        .cloud4::after {
+            width: 95px;
+            height: 58px;
+            top: -26px;
+            left: 60px;
+        }
+
+        @keyframes driftCloud {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(100vw + 400px));
+            }
+        }
+
+        .river {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .river svg {
+            width: 200%;
+            height: 100%;
+            animation: flowRiver 14s linear infinite;
+        }
+        @keyframes flowRiver {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .plant {
+            position: fixed;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .plant svg {
+            animation: swayPlant 5s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+        .plant-left {
+            left: 15px;
+        }
+        .plant-right {
+            right: 15px;
+        }
+        @keyframes swayPlant {
+            0%,
+            100% {
+                transform: rotate(-4deg);
+            }
+            50% {
+                transform: rotate(4deg);
+            }
+        }
+
+        .leaf-fall {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 3;
+        }
+        .leaf1 {
+            animation: leafDrop 14s linear infinite;
+            left: 7%;
+        }
+        .leaf2 {
+            animation: leafDrop 16s linear infinite 5s;
+            left: 25%;
+        }
+        .leaf3 {
+            animation: leafDrop 13s linear infinite 8s;
+            left: 48%;
+        }
+        .leaf4 {
+            animation: leafDrop 17s linear infinite 11s;
+            left: 68%;
+        }
+        .leaf5 {
+            animation: leafDrop 15s linear infinite 3s;
+            left: 85%;
+        }
+        @keyframes leafDrop {
+            0% {
+                transform: translateY(-40px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(105vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ===== HEADER ===== */
+        .hero {
+            position: relative;
+            min-height: 55vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, #0f2b1d 0%, var(--forest) 50%, var(--mid-green) 100%);
+            color: var(--white);
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(45, 90, 63, 0.6), rgba(74, 143, 167, 0.4));
+            opacity: 0.8;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+        .hero h1 {
+            font-size: clamp(1.8rem, 5vw, 3.6rem);
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
+            letter-spacing: -0.5px;
+        }
+        .hero .subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            font-weight: 300;
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+        .badge-group {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            justify-content: center;
+        }
+        .badge-group span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 110;
+            background: rgba(27, 59, 43, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 0 16px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding: 8px 0;
+        }
+        .nav-inner::-webkit-scrollbar {
+            display: none;
+        }
+        .nav-link {
+            color: var(--pale-green);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 7px 16px;
+            border-radius: 24px;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--mid-green);
+            color: white;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        .section-title {
+            font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+            font-weight: 700;
+            color: var(--deep-green);
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--bark);
+            font-size: 0.9rem;
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .divider {
+            width: 70px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--leaf), var(--river-blue));
+            margin: 10px auto 24px;
+            border-radius: 4px;
+        }
+
+        /* ===== MAP ===== */
+        .map-container {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin: 20px auto;
+        }
+        #map {
+            width: 100%;
+            height: 460px;
+            border-radius: 16px;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            padding: 14px 20px 18px;
+            background: #f9f7f2;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--bark);
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ===== ATTRACTIONS ===== */
+        .attractions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+        }
+        .attraction-card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            border-left: 5px solid var(--leaf);
+        }
+        .attraction-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+        }
+        .attraction-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+        .attraction-card p {
+            font-size: 0.82rem;
+            color: var(--bark);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .attraction-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .attraction-links a {
+            font-size: 0.75rem;
+            color: var(--forest);
+            text-decoration: none;
+            padding: 4px 12px;
+            border: 1px solid var(--sage);
+            border-radius: 20px;
+            transition: 0.3s;
+            background: white;
+        }
+        .attraction-links a:hover {
+            background: var(--forest);
+            color: white;
+            border-color: var(--forest);
+        }
+
+        /* ===== ITINERARY ACCORDION ===== */
+        .itinerary-section {
+            background: linear-gradient(180deg, var(--cream), var(--sand));
+        }
+        .day-block {
+            background: white;
+            border-radius: 18px;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .day-header {
+            padding: 16px 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, var(--forest), var(--mid-green));
+            color: white;
+            user-select: none;
+            transition: 0.3s;
+        }
+        .day-header:hover {
+            background: linear-gradient(135deg, var(--deep-green), var(--forest));
+        }
+        .day-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .day-number {
+            background: rgba(255, 255, 255, 0.2);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .day-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .day-date {
+            font-size: 0.75rem;
+            opacity: 0.75;
+            margin-top: 2px;
+        }
+        .day-toggle {
+            font-size: 1.3rem;
+            transition: 0.3s;
+        }
+        .day-block.open .day-toggle {
+            transform: rotate(180deg);
+        }
+        .day-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease;
+        }
+        .day-block.open .day-content {
+            max-height: 10000px;
+        }
+        .day-inner {
+            padding: 20px;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+        }
+        .schedule-table th {
+            background: var(--mid-green);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+        .schedule-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--sand);
+            vertical-align: top;
+        }
+        .schedule-table tr:nth-child(even) td {
+            background: rgba(184, 212, 181, 0.08);
+        }
+        .time-cell {
+            font-weight: 600;
+            color: var(--forest);
+            white-space: nowrap;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .tag-transport {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .tag-food {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .tag-sight {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .tag-stay {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        .tag-other {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+        .cost {
+            font-weight: 600;
+            color: var(--bark);
+        }
+        .overnight-box {
+            background: linear-gradient(135deg, #f5f0e8, #e8dcc8);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 12px;
+            border-left: 4px solid var(--bark);
+        }
+        .menu-box {
+            background: var(--sand);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .menu-item {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        /* ===== CHECKLIST ===== */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 18px;
+        }
+        .checklist-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .checklist-item.checked {
+            opacity: 0.4;
+        }
+        .checklist-item.checked .item-text {
+            text-decoration: line-through;
+        }
+        .check-box {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--mid-green);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .checklist-item.checked .check-box {
+            background: var(--mid-green);
+        }
+        .checklist-item.checked .check-box::after {
+            content: '✓';
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .item-text {
+            font-size: 0.85rem;
+        }
+
+        /* ===== PHONES ===== */
+        .phones-section {
+            background: linear-gradient(135deg, var(--deep-green), var(--forest));
+            border-radius: 20px;
+            padding: 35px;
+            color: white;
+            margin: 20px auto;
+        }
+        .phones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 14px;
+            margin-top: 20px;
+        }
+        .phone-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .phone-card .icon {
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+        .phone-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--pale-green);
+        }
+
+        /* ===== WEATHER ===== */
+        .weather-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+        }
+        .weather-card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            min-width: 150px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .weather-icon {
+            font-size: 2.2rem;
+            margin: 6px 0;
+        }
+        .weather-temp {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--deep-green);
+        }
+
+        /* ===== PHOTO ALBUM ===== */
+        .photo-day {
+            background: white;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .photo-day-header {
+            padding: 14px 20px;
+            background: var(--mid-green);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .photo-day-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s ease;
+        }
+        .photo-day.open .photo-day-content {
+            max-height: 10000px;
+        }
+        .photo-inner {
+            padding: 18px;
+        }
+        .upload-area {
+            border: 2px dashed var(--sage);
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: 0.2s;
+        }
+        .upload-area:hover {
+            border-color: var(--leaf);
+            background: rgba(107, 158, 94, 0.03);
+        }
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 10px;
+        }
+        .photo-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+            background: var(--cream);
+        }
+        .photo-item img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            display: block;
+        }
+        .photo-caption input {
+            width: 100%;
+            border: 1px solid var(--sand);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            outline: none;
+        }
+        .photo-actions {
+            display: flex;
+            gap: 4px;
+            padding: 4px 8px 6px;
+        }
+        .btn-sm {
+            flex: 1;
+            padding: 5px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-download {
+            background: var(--mid-green);
+            color: white;
+        }
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--forest);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background: var(--deep-green);
+            transform: translateY(-2px);
+        }
+
+        /* ===== BUDGET TABLE ===== */
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            font-size: 0.85rem;
+        }
+        .budget-table th {
+            background: var(--deep-green);
+            color: white;
+            padding: 12px 18px;
+            text-align: left;
+        }
+        .budget-table td {
+            padding: 10px 18px;
+            border-bottom: 1px solid var(--sand);
+        }
+        .total-row {
+            background: var(--mid-green);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--deep-green);
+            color: var(--sage);
+            text-align: center;
+            padding: 24px;
+            font-size: 0.8rem;
+        }
+
+        /* ===== SCROLL TO TOP ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 80px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            background: var(--forest);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 50;
+            opacity: 0;
+            transition: 0.3s;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+        }
+        .scroll-top.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            #map {
+                height: 300px;
+            }
+            .schedule-table {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Анимированный фон -->
+    <div class="bg-animation">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+        <div class="cloud cloud4"></div>
+    </div>
+    <div class="river">
+        <svg viewBox="0 0 2400 60" preserveAspectRatio="none">
+            <path d="M0,30 Q150,20 300,38 T600,28 T900,42 T1200,22 T1500,36 T1800,18 T2100,32 T2400,25 V60 H0Z" fill="rgba(74,143,167,0.08)"/>
+            <path d="M0,42 Q150,32 300,48 T600,35 T900,50 T1200,30 T1500,44 T1800,28 T2100,42 T2400,33 V60 H0Z" fill="rgba(74,143,167,0.05)"/>
+        </svg>
+    </div>
+    <div class="plant plant-left">
+        <svg width="45" height="150" viewBox="0 0 45 150"><path d="M22,150 Q18,120 10,80 Q2,45 14,22 Q22,5 28,22 Q36,45 28,80 Q26,120 22,150Z" fill="#2d5a3f" opacity="0.2"/></svg>
+    </div>
+    <div class="plant plant-right">
+        <svg width="45" height="150" viewBox="0 0 45 150"><path d="M22,150 Q26,120 34,80 Q42,45 30,22 Q22,5 22,22 Q12,45 20,80 Q24,120 22,150Z" fill="#2d5a3f" opacity="0.2"/></svg>
+    </div>
+    <div class="leaf-fall leaf1">🍃</div>
+    <div class="leaf-fall leaf2">🍂</div>
+    <div class="leaf-fall leaf3">🌿</div>
+    <div class="leaf-fall leaf4">🍃</div>
+    <div class="leaf-fall leaf5">🍂</div>
+
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="hero">
+            <div class="hero-content">
+                <h1>🌲 Приключенческое путешествие по Уралу</h1>
+                <p class="subtitle">Природа, мистика и кемпинг — 10 дней (6–14 июня 2026) для 3 человек на Chery Tiggo 4 Pro</p>
+                <div class="badge-group">
+                    <span>📅 6–14 июня 2026</span>
+                    <span>👥 3 чел</span>
+                    <span>🚗 ≈1 800 км</span>
+                    <span>💰 ≈78 640 ₽</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Навигация -->
+        <nav class="nav">
+            <div class="nav-inner">
+                <a href="#map" class="nav-link">🗺 Карта</a>
+                <a href="#attractions" class="nav-link">🏔 Места</a>
+                <a href="#itinerary" class="nav-link">📋 Маршрут</a>
+                <a href="#checklist" class="nav-link">✅ Чек-лист</a>
+                <a href="#phones" class="nav-link">📞 Телефоны</a>
+                <a href="#weather" class="nav-link">🌤 Погода</a>
+                <a href="#photos" class="nav-link">📸 Фото</a>
+                <a href="#budget" class="nav-link">💰 Бюджет</a>
+            </div>
+        </nav>
+
+        <!-- Карта -->
+        <section class="section" id="map">
+            <h2 class="section-title">Интерактивная карта маршрута</h2>
+            <div class="divider"></div>
+            <p class="section-subtitle">Все ключевые точки путешествия</p>
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:#2d5a3f;"></div> Старт/Финиш</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#4a8fa7;"></div> Достопримечательности</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#e8a87c;"></div> Кемпинг</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#8b7355;"></div> Отели</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Достопримечательности -->
+        <section class="section" id="attractions">
+            <h2 class="section-title">Достопримечательности</h2>
+            <div class="divider"></div>
+            <div class="attractions-grid" id="attractionsContainer"></div>
+        </section>
+
+        <!-- Маршрут по дням -->
+        <section class="section itinerary-section" id="itinerary">
+            <h2 class="section-title">Пошаговый план путешествия</h2>
+            <div class="divider"></div>
+            <p class="section-subtitle">Нажмите на день, чтобы увидеть расписание</p>
+            <div id="itineraryContainer"></div>
+        </section>
+
+        <!-- Чек-лист -->
+        <section class="section" id="checklist">
+            <h2 class="section-title">Чек-лист подготовки</h2>
+            <div class="divider"></div>
+            <p class="section-subtitle">Отмечайте выполненные пункты — прогресс сохраняется</p>
+            <div class="checklist-grid" id="checklistContainer"></div>
+        </section>
+
+        <!-- Телефоны -->
+        <section class="section" id="phones">
+            <div class="phones-section">
+                <h2 class="section-title" style="color:white;">📞 Полезные номера телефонов</h2>
+                <div class="divider" style="background:white;"></div>
+                <div class="phones-grid" id="phonesContainer"></div>
+            </div>
+        </section>
+
+        <!-- Погода -->
+        <section class="section" id="weather">
+            <h2 class="section-title">🌤 Прогноз погоды</h2>
+            <div class="divider"></div>
+            <p class="section-subtitle">Ожидаемая погода в ключевых точках (6–14 июня 2026)</p>
+            <div class="weather-cards" id="weatherContainer"></div>
+            <div style="text-align:center; margin-top:25px;">
+                <a href="https://yandex.ru/pogoda/ural?lat=55.0&lon=58.0" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:var(--forest);color:white;padding:12px 28px;border-radius:28px;text-decoration:none;font-weight:600;">🌐 Открыть Яндекс.Погоду</a>
+            </div>
+        </section>
+
+        <!-- Фотоальбом -->
+        <section class="section" id="photos" style="background: #f0ede5;">
+            <h2 class="section-title">📸 Фотоальбом путешествия</h2>
+            <div class="divider"></div>
+            <p class="section-subtitle">Добавляйте свои фотографии к каждому дню с подписями</p>
+            <div id="photoAlbumContainer"></div>
+            <div style="text-align:center;">
+                <button class="btn-primary" onclick="downloadAllPhotos()">📥 Скачать все фото</button>
+            </div>
+        </section>
+
+        <!-- Бюджет -->
+        <section class="section" id="budget">
+            <h2 class="section-title">💰 Бюджет поездки</h2>
+            <div class="divider"></div>
+            <p class="section-subtitle">Общий бюджет на троих: ~78 640 ₽</p>
+            <table class="budget-table" id="budgetTable"></table>
+        </section>
+
+        <footer class="footer">
+            <p>🌲 Приключенческое путешествие по Уралу — 2026</p>
+            <p>Южа → Чебоксары → Сатка → Тургояк → Златоуст → Чебоксары → Йошкар-Ола → Южа</p>
+            <p style="opacity:0.6; margin-top:6px;">Сделано с ❤️ • Готово к публикации на GitHub Pages</p>
+        </footer>
+    </div>
+
+    <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <script>
+        (function() {
+            // ----- ИНИЦИАЛИЗАЦИЯ КАРТЫ -----
+            ymaps.ready(function() {
+                const map = new ymaps.Map('map', {
+                    center: [55.5, 58.5],
+                    zoom: 6,
+                    controls: ['zoomControl', 'typeSelector', 'fullscreenControl']
+                });
+                const points = [
+                    { coords: [56.15, 42.68], title: '🏁 Южа — Старт/Финиш', color: '#2d5a3f' },
+                    { coords: [56.13, 47.25], title: '🏛 Монумент Славы', color: '#4a8fa7' },
+                    { coords: [55.05, 58.82], title: '🏕 Кемпинг у реки Ай', color: '#e8a87c' },
+                    { coords: [54.95, 58.65], title: '🏔 Большие Притёсы', color: '#4a8fa7' },
+                    { coords: [55.10, 58.45], title: '🦇 Пещеры Сикияз-Тамак', color: '#4a8fa7' },
+                    { coords: [55.18, 60.07], title: '🏝 Озеро Тургояк', color: '#4a8fa7' },
+                    { coords: [55.15, 60.12], title: '🗿 Остров Веры', color: '#4a8fa7' },
+                    { coords: [55.04, 60.10], title: '🥟 Музей пельменя', color: '#4a8fa7' },
+                    { coords: [55.17, 59.65], title: '⛰ Таганай — Чёрная скала', color: '#4a8fa7' },
+                    { coords: [55.17, 59.67], title: '🏨 Златоуст', color: '#8b7355' },
+                    { coords: [56.63, 47.90], title: '🏘 Йошкар-Ола', color: '#4a8fa7' },
+                    { coords: [55.0, 58.5], title: '💧 Родник «Живая вода»', color: '#4a8fa7' }
+                ];
+                points.forEach(p => {
+                    map.geoObjects.add(new ymaps.Placemark(p.coords, {
+                        hintContent: p.title
+                    }, {
+                        preset: 'islands#circleIcon',
+                        iconColor: p.color
+                    }));
+                });
+                const routeCoords = points.map(p => p.coords);
+                map.geoObjects.add(new ymaps.Polyline(routeCoords, {}, {
+                    strokeColor: '#2d5a3f',
+                    strokeWidth: 3,
+                    strokeOpacity: 0.5,
+                    strokeStyle: 'dash'
+                }));
+                map.setBounds(map.geoObjects.getBounds(), { checkZoomRange: true, zoomMargin: 40 });
+            });
+
+            // ----- ДАННЫЕ -----
+            const attractionsData = [
+                { name: '⛰ Монумент Славы (Чебоксары)', desc: 'Памятник на берегу Волги. Открыт 24/7, бесплатный вход.', mapLink: 'https://yandex.ru/maps/?text=Монумент+Славы+Чебоксары',
+                    wiki: 'https://ru.wikipedia.org/wiki/Монумент_Славы_(Чебоксары)' },
+                { name: '⛰ Большие Притёсы', desc: 'Скалы до 100 м на реке Ай. Место силы.', mapLink: 'https://yandex.ru/maps/?text=Большие+Притёсы+Сатка',
+                    wiki: 'https://ru.wikipedia.org/wiki/Большие_Притёсы' },
+                { name: '🦇 Пещеры Сикияз-Тамак', desc: 'Древний комплекс с находками неандертальцев.', mapLink: 'https://yandex.ru/maps/?text=Сикияз-Тамак',
+                    wiki: 'https://ru.wikipedia.org/wiki/Сикияз-Тамак' },
+                { name: '🏝 Озеро Тургояк', desc: '«Маленький Байкал», вода +15°C.', mapLink: 'https://yandex.ru/maps/?text=Озеро+Тургояк',
+                    wiki: 'https://ru.wikipedia.org/wiki/Тургояк_(озеро)' },
+                { name: '🗿 Остров Веры', desc: 'Мегалиты, древние легенды. Вход 250₽/чел.', mapLink: 'https://yandex.ru/maps/?text=Остров+Веры+Тургояк',
+                    wiki: 'https://ru.wikipedia.org/wiki/Остров_Веры' },
+                { name: '🥟 Музей пельменя (Миасс)', desc: 'Экскурсия + мастер-класс, 450₽/чел.', mapLink: 'https://yandex.ru/maps/?text=Музей+пельменя+Миасс',
+                    wiki: 'https://pelmennmuseum.ru' },
+                { name: '⛰ Нацпарк Таганай — Чёрная скала', desc: 'Экотропа, панорамы. Вход 100₽.', mapLink: 'https://yandex.ru/maps/?text=Таганай+Чёрная+скала',
+                    wiki: 'https://taganay.org' },
+                { name: '💧 Родник «Живая вода»', desc: 'Символическое место очищения.', mapLink: 'https://yandex.ru/maps/?text=Родник+Живая+вода', wiki: '' },
+                { name: '🏘 Йошкар-Ола', desc: 'Яркие дома, марийская кухня.', mapLink: 'https://yandex.ru/maps/?text=Йошкар-Ола',
+                    wiki: 'https://ru.wikipedia.org/wiki/Йошкар-Ола' }
+            ];
+
+            const itineraryDays = [
+                { day: 1, title: 'Отправление из Южи в Чебоксары', date: '6 июня', overnight: 'Отель в Чебоксарах (до 4 000 ₽)',
+                    menu: ['☕ Кофе', '🥪 Перекус у реки', '🍲 Чувашская кухня', '🍵 Чай'], rows: [
+                        ['07:30–11:00', '🚗', 'Южа → река Ай (300 км)', '–', 'Перерыв каждые 2 ч'],
+                        ['11:00–11:30', '🌿', 'Остановка у реки Ай', '0 ₽', 'Фото, медитация'],
+                        ['11:30–13:40', '🚗', 'Река Ай → Чебоксары (200 км)', '–', 'Въезд в Чувашию'],
+                        ['13:40–14:50', '🏨', 'Заселение в отель', '–', 'Рейтинг ≥8.0'],
+                        ['15:00–16:30', '🏛', 'Монумент Славы', '0 ₽', 'Вид на Волгу'],
+                        ['17:00–18:30', '🍽', 'Ресторан «Чайковский»', '2 400 ₽', '800 ₽/чел']
+                ] },
+                { day: 2, title: 'Дорога в Сатку — кемпинг у реки Ай', date: '7 июня', overnight: 'Кемпинг у реки Ай (~1 000 ₽)',
+                    menu: ['☕ Кофе на АЗС', '🥪 Перекус', '🍲 Гречка с тушёнкой', '🍵 Чай у костра'], rows: [
+                        ['07:00–07:30', '🏨', 'Выписка из отеля', '–', 'Проверить топливо'],
+                        ['07:30–11:00', '🚗', 'Чебоксары → Уфа (3 ч)', '–', 'Офлайн-карты'],
+                        ['11:00–11:30', '🍽', 'Перекус на АЗС', '900 ₽', 'Быстро и безопасно'],
+                        ['11:30–14:30', '🚗', 'Второй этап (3 ч)', '–', 'Перерыв на растяжку'],
+                        ['14:30–15:00', '🌿', 'Остановка, вода', '–', 'Контроль усталости'],
+                        ['15:00–20:00', '🚗', 'Финальный этап (5 ч) — Сатка', '–', 'Юг Урала'],
+                        ['20:00–20:30', '🏕', 'Установка палаток', '–', 'Ровная поверхность'],
+                        ['20:30–21:30', '🍽', 'Ужин на горелке', '450 ₽', 'Тёплое блюдо']
+                ] },
+                { day: 3, title: 'Большие Притёсы и пещеры Сикияз-Тамак', date: '8 июня', overnight: 'Кемпинг у оз. Тургояк (~1 000 ₽)',
+                    menu: ['🥣 Овсянка', '🍫 Батончик', '🍲 Рис с тушёнкой', '🍵 Травяной чай'], rows: [
+                        ['07:00–07:30', '🍽', 'Завтрак в лагере', '300 ₽', 'Каша, чай'],
+                        ['07:30–08:10', '🚗', 'Сатка → Притёсы (30 км)', '–', ''],
+                        ['08:10–11:30', '⛰', 'Большие Притёсы', '0 ₽', 'Фонарик, вода!'],
+                        ['11:30–11:45', '🚗', 'К пещерам (9 км)', '–', ''],
+                        ['11:45–14:15', '🦇', 'Пещеры Сикияз-Тамак', '0 ₽', 'Обувь, фонарики'],
+                        ['14:15–14:45', '🍽', 'Ланч (батончики)', '300 ₽', ''],
+                        ['14:45–16:30', '🚗', 'К Тургояку (90 км)', '–', ''],
+                        ['16:30–19:00', '🏕🍽', 'Лагерь и ужин', '450 ₽', ''],
+                        ['19:00–20:30', '🌅', 'Костёр, звёзды', '0 ₽', '']
+                ] },
+                { day: 4, title: 'Полный день на озере Тургояк', date: '9 июня', overnight: 'Кемпинг у оз. Тургояк',
+                    menu: ['🥣 Пшёнка', '🧀 Бутерброды', '🍲 Суп с грибами', '🫖 Травяной сбор'], rows: [
+                        ['07:30–09:00', '🧘', 'Йога и медитация', '0 ₽', 'Энергия озера'],
+                        ['09:00–11:00', '🍽', 'Завтрак, отдых', '300 ₽', ''],
+                        ['11:00–14:00', '🏊', 'Купание, загар', '0 ₽', 'Вода холодная!'],
+                        ['14:00–16:00', '📖', 'Отдых, чтение', '0 ₽', ''],
+                        ['16:00–18:00', '🧹', 'Подготовка к ужину', '–', ''],
+                        ['18:00–19:30', '🍽', 'Ужин у костра', '450 ₽', ''],
+                        ['19:30–21:00', '🌅', 'Закат, медитация', '0 ₽', '']
+                ] },
+                { day: 5, title: 'Остров Веры — сердце мистики Урала', date: '10 июня', overnight: 'Кемпинг у оз. Тургояк',
+                    menu: ['🥣 Гречка', '🥜 Орехи', '🍲 Паста', '🍵 Мята'], rows: [
+                        ['07:00–07:30', '🍽', 'Завтрак', '300 ₽', ''],
+                        ['07:30–08:00', '🚶', 'Пешком до пляжа', '0 ₽', '1.5 км'],
+                        ['08:00–08:30', '📋', 'Встреча с гидом', '–', 'Лодка бронируется!'],
+                        ['08:30–09:00', '🚤', 'Лодка на остров', '750 ₽', 'На троих'],
+                        ['09:00–13:00', '🗿', 'Остров Веры', '750 ₽', 'Вход 250₽/чел'],
+                        ['13:00–14:00', '🚤🚶', 'Обратно', '750 ₽', ''],
+                        ['14:00–19:30', '🍽📖', 'Отдых, ужин', '450 ₽', '']
+                ] },
+                { day: 6, title: 'Миасс и музей пельменя', date: '11 июня', overnight: 'Кемпинг у оз. Тургояк',
+                    menu: ['🥣 Рис', '🥟 Пельмени', '🍲 Уха', '🫖 Иван-чай'], rows: [
+                        ['08:00–08:30', '🍽', 'Завтрак', '300 ₽', ''],
+                        ['08:30–09:10', '🚗', 'Тургояк → Миасс', '–', '40 км'],
+                        ['09:10–11:40', '🥟', 'Музей пельменя', '1 350 ₽', '450₽/чел'],
+                        ['11:40–12:10', '🍽', 'Ланч', '1 350 ₽', ''],
+                        ['12:10–13:00', '🚗', 'Обратно в лагерь', '–', ''],
+                        ['13:00–19:30', '📦🍽', 'Сборы, ужин', '450 ₽', '']
+                ] },
+                { day: 7, title: 'Поход в Таганай и Златоуст', date: '12 июня', overnight: 'Отель в Златоусте (до 4 000 ₽)',
+                    menu: ['🥣 Пшёнка', '🥪 Сэндвичи', '🍲 Горячий обед', '🍵 Чай'], rows: [
+                        ['07:00–07:30', '🍽', 'Завтрак, сбор лагеря', '300 ₽', ''],
+                        ['07:30–09:00', '🚗', 'К Таганаю (80 км)', '–', ''],
+                        ['09:00–13:30', '⛰', 'Чёрная скала', '360 ₽', 'Вход 100₽'],
+                        ['13:30–15:30', '🚗', 'В Златоуст', '–', ''],
+                        ['15:30–16:30', '🏨', 'Отель, душ', 'до 4 000 ₽', ''],
+                        ['18:00–19:30', '🍽', 'Ресторан «Центральный»', '2 100 ₽', '700₽/чел']
+                ] },
+                { day: 8, title: 'Возвращение в Чебоксары', date: '13 июня', overnight: 'Отель в Чебоксарах',
+                    menu: ['☕ Кофе', '💧 Вода из родника', '🍲 Ужин на набережной', '🍵 Чай'], rows: [
+                        ['07:00–07:30', '🏨', 'Выписка', '–', ''],
+                        ['07:30–11:00', '🚗', 'Этап 1 (3.5 ч)', '–', ''],
+                        ['11:00–11:30', '💧', 'Родник «Живая вода»', '0 ₽', ''],
+                        ['11:30–20:00', '🚗🍽', 'Дорога, ужин', '2 400 ₽', '800₽/чел']
+                ] },
+                { day: 9, title: 'Йошкар-Ола и возвращение домой', date: '14 июня', overnight: 'Домой!',
+                    menu: ['☕ Кофе', '🥞 Марийские блины', '🍲 Суп', '🍵 Финальный чай'], rows: [
+                        ['07:00–07:30', '🏨', 'Выписка', '–', ''],
+                        ['07:30–09:30', '🚗', 'Чебоксары → Йошкар-Ола', '–', '150 км'],
+                        ['09:30–12:00', '🏘', 'Прогулка по городу', '0 ₽', 'Сувениры'],
+                        ['12:00–13:00', '🍽', 'Национальное кафе', '1 800 ₽', '600₽/чел'],
+                        ['13:00–17:00', '🚗', 'Йошкар-Ола → Южа', '–', '300 км'],
+                        ['17:00–17:30', '🏠', 'Прибытие домой!', '0 ₽', '🎉']
+                ] }
+            ];
+
+            const checklistCategories = [
+                { title: '⛺ Снаряжение', items: ['Палатка', 'Спальники', 'Коврики', 'Горелка + газ', 'Кастрюля, посуда',
+                        'Фонарики', 'Power bank', 'Компас', 'Мультиинструмент'
+                    ] },
+                { title: '👕 Одежда', items: ['Тёплая одежда', 'Водонепроницаемая обувь', 'Дождевик', 'Треккинговые ботинки',
+                        'Термобельё', 'Кепка/шапка', 'Перчатки', 'Сменная одежда'
+                    ] },
+                { title: '🍳 Продукты', items: ['Крупы', 'Консервы', 'Чай, кофе', 'Сухофрукты', 'Хлеб', 'Масло, специи',
+                        'Вода', 'Топливо для горелки'
+                    ] },
+                { title: '📱 Техника', items: ['Офлайн-карты Yandex', 'Maps.me', 'Зарядки', 'Авто ЗУ', 'Проверить авто',
+                        'Бронь отелей', 'Бронь лодки'
+                    ] },
+                { title: '💊 Аптечка', items: ['Пластыри', 'Антисептик', 'Обезболивающее', 'От укусов', 'Крем от солнца',
+                        'Бинт', 'Уголь'
+                    ] },
+                { title: '📋 Прочее', items: ['Паспорта', 'Страховка', 'Наличные', 'Мешки для мусора', 'Салфетки',
+                        'Сообщить маршрут близким'
+                    ] }
+            ];
+
+            const phonesData = [
+                { icon: '🚨', name: 'Экстренные', number: '112' },
+                { icon: '🚑', name: 'Скорая', number: '103' },
+                { icon: '🚒', name: 'Пожарная', number: '101' },
+                { icon: '🚔', name: 'Полиция', number: '102' },
+                { icon: '⛰', name: 'Таганай', number: '+7 (3513) 42-21-08' },
+                { icon: '🏝', name: 'Турцентр Тургояк', number: '+7 (3513) 55-22-00' },
+                { icon: '🛣', name: 'Помощь на дороге', number: '8 (800) 200-00-00' }
+            ];
+
+            const weatherData = [
+                { city: 'Чебоксары', icon: '☀️', temp: '+22°', desc: 'Ясно' },
+                { city: 'Сатка / Ай', icon: '🌤️', temp: '+18°', desc: 'Возможен дождь' },
+                { city: 'Тургояк', icon: '🌤️', temp: '+20°', desc: 'Вода +15°' },
+                { city: 'Златоуст', icon: '🌥️', temp: '+17°', desc: 'Прохладно' },
+                { city: 'Йошкар-Ола', icon: '☀️', temp: '+23°', desc: 'Тепло' }
+            ];
+
+            // ----- РЕНДЕРИНГ -----
+            function renderAttractions() {
+                const container = document.getElementById('attractionsContainer');
+                container.innerHTML = attractionsData.map(a => `
+                    <div class="attraction-card">
+                        <h3>${a.name}</h3>
+                        <p>${a.desc}</p>
+                        <div class="attraction-links">
+                            <a href="${a.mapLink}" target="_blank">📍 Карта</a>
+                            ${a.wiki ? `<a href="${a.wiki}" target="_blank">📖 Подробнее</a>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function renderItinerary() {
+                const container = document.getElementById('itineraryContainer');
+                container.innerHTML = itineraryDays.map(d => `
+                    <div class="day-block" id="day${d.day}">
+                        <div class="day-header" onclick="toggleDay('day${d.day}')">
+                            <div class="day-header-left">
+                                <div class="day-number">${d.day}</div>
+                                <div>
+                                    <div class="day-title">${d.title}</div>
+                                    <div class="day-date">${d.date}</div>
+                                </div>
+                            </div>
+                            <div class="day-toggle">▼</div>
+                        </div>
+                        <div class="day-content">
+                            <div class="day-inner">
+                                <table class="schedule-table">
+                                    <tr><th>Время</th><th>Тип</th><th>Подробности</th><th>Стоимость</th><th>Примечания</th></tr>
+                                    ${d.rows.map(r => {
+                                        let tagClass = '';
+                                        if(r[1].includes('🚗')||r[1].includes('🚶')||r[1].includes('🚤')) tagClass='tag-transport';
+                                        else if(r[1].includes('🍽')) tagClass='tag-food';
+                                        else if(r[1].includes('⛰')||r[1].includes('🦇')||r[1].includes('🗿')||r[1].includes('🥟')||r[1].includes('🏛')||r[1].includes('💧')) tagClass='tag-sight';
+                                        else if(r[1].includes('🏨')||r[1].includes('🏕')) tagClass='tag-stay';
+                                        else tagClass='tag-other';
+                                        return `<tr><td class="time-cell">${r[0]}</td><td><span class="tag ${tagClass}">${r[1]}</span></td><td>${r[2]}</td><td class="cost">${r[3]}</td><td>${r[4]}</td></tr>`;
+                                    }).join('')}
+                                </table>
+                                <div class="overnight-box"><strong>🏨 Ночёвка:</strong> ${d.overnight}</div>
+                                <div class="menu-box"><strong>🍽 Меню дня:</strong><div class="menu-grid">${d.menu.map(m => `<div class="menu-item">${m}</div>`).join('')}</div></div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                document.getElementById('day1').classList.add('open');
+            }
+
+            window.toggleDay = function(id) {
+                document.getElementById(id).classList.toggle('open');
+            };
+
+            function renderChecklist() {
+                const container = document.getElementById('checklistContainer');
+                const saved = JSON.parse(localStorage.getItem('ural_checklist') || '{}');
+                container.innerHTML = checklistCategories.map((cat, ci) => `
+                    <div class="checklist-card">
+                        <h3>${cat.title}</h3>
+                        ${cat.items.map((item, ii) => {
+                            const key = `${ci}_${ii}`;
+                            const checked = saved[key] ? 'checked' : '';
+                            return `<div class="checklist-item ${checked}" data-key="${key}" onclick="toggleCheck(this)">
+                                <div class="check-box"></div>
+                                <span class="item-text">${item}</span>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                `).join('');
+            }
+
+            window.toggleCheck = function(el) {
+                el.classList.toggle('checked');
+                const saved = JSON.parse(localStorage.getItem('ural_checklist') || '{}');
+                saved[el.dataset.key] = el.classList.contains('checked');
+                localStorage.setItem('ural_checklist', JSON.stringify(saved));
+            };
+
+            function renderPhones() {
+                document.getElementById('phonesContainer').innerHTML = phonesData.map(p => `
+                    <div class="phone-card">
+                        <div class="icon">${p.icon}</div>
+                        <h4>${p.name}</h4>
+                        <div class="phone-number">${p.number}</div>
+                    </div>
+                `).join('');
+            }
+
+            function renderWeather() {
+                document.getElementById('weatherContainer').innerHTML = weatherData.map(w => `
+                    <div class="weather-card">
+                        <h4>${w.city}</h4>
+                        <div class="weather-icon">${w.icon}</div>
+                        <div class="weather-temp">${w.temp}</div>
+                        <div>${w.desc}</div>
+                    </div>
+                `).join('');
+            }
+
+            // ----- ФОТОАЛЬБОМ -----
+            let photoData = JSON.parse(localStorage.getItem('ural_photos') || '{}');
+
+            function renderPhotoAlbum() {
+                const container = document.getElementById('photoAlbumContainer');
+                const dayLabels = ['6 июня — Отправление', '7 июня — Дорога в Сатку', '8 июня — Притёсы и пещеры',
+                    '9 июня — Озеро Тургояк', '10 июня — Остров Веры', '11 июня — Миасс', '12 июня — Таганай',
+                    '13 июня — Возвращение', '14 июня — Йошкар-Ола'
+                ];
+                container.innerHTML = dayLabels.map((label, idx) => {
+                    const photos = photoData[idx] || [];
+                    return `
+                        <div class="photo-day" id="photoDay${idx}">
+                            <div class="photo-day-header" onclick="togglePhotoDay('photoDay${idx}')">
+                                <span>📅 ${label}</span><span>▼</span>
+                            </div>
+                            <div class="photo-day-content">
+                                <div class="photo-inner">
+                                    <div class="upload-area" onclick="document.getElementById('fileInput${idx}').click()">
+                                        📷 Нажмите, чтобы добавить фото
+                                        <input type="file" id="fileInput${idx}" accept="image/*" multiple hidden onchange="uploadPhotos(${idx}, this.files)">
+                                    </div>
+                                    <div class="photo-grid">
+                                        ${photos.map((p, pi) => `
+                                            <div class="photo-item">
+                                                <img src="${p.data}" alt="фото">
+                                                <div class="photo-caption"><input type="text" placeholder="Подпись..." value="${p.caption||''}" onchange="updateCaption(${idx},${pi},this.value)"></div>
+                                                <div class="photo-actions">
+                                                    <button class="btn-sm btn-download" onclick="downloadSingle('${p.data}','day${idx+1}_photo${pi+1}')">📥</button>
+                                                    <button class="btn-sm btn-delete" onclick="deletePhoto(${idx},${pi})">🗑</button>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            window.togglePhotoDay = function(id) {
+                document.getElementById(id).classList.toggle('open');
+            };
+
+            window.uploadPhotos = function(dayIndex, files) {
+                if (!photoData[dayIndex]) photoData[dayIndex] = [];
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        photoData[dayIndex].push({ data: e.target.result, caption: '' });
+                        savePhotos();
+                        renderPhotoAlbum();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            window.updateCaption = function(dayIdx, photoIdx, value) {
+                photoData[dayIdx][photoIdx].caption = value;
+                savePhotos();
+            };
+
+            window.deletePhoto = function(dayIdx, photoIdx) {
+                if (confirm('Удалить это фото?')) {
+                    photoData[dayIdx].splice(photoIdx, 1);
+                    savePhotos();
+                    renderPhotoAlbum();
+                }
+            };
+
+            window.downloadSingle = function(dataUrl, filename) {
+                const a = document.createElement('a');
+                a.href = dataUrl;
+                a.download = filename + '.jpg';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            };
+
+            window.downloadAllPhotos = function() {
+                const all = [];
+                for (const [day, photos] of Object.entries(photoData)) {
+                    photos.forEach((p, i) => all.push({ data: p.data, name: `day${parseInt(day)+1}_photo${i+1}` }));
+                }
+                if (!all.length) return alert('Нет загруженных фото!');
+                all.forEach((item, idx) => setTimeout(() => downloadSingle(item.data, item.name), idx * 300));
+            };
+
+            function savePhotos() {
+                localStorage.setItem('ural_photos', JSON.stringify(photoData));
+            }
+
+            function renderBudget() {
+                document.getElementById('budgetTable').innerHTML = `
+                    <tr><th>Категория</th><th>Детали</th><th>Сумма</th></tr>
+                    <tr><td>🎟 Аттракционы</td><td>Таганай, лодка, музей</td><td>2 400 ₽</td></tr>
+                    <tr><td>🏨 Отели</td><td>3 ночи × 4 000 ₽</td><td>12 000 ₽</td></tr>
+                    <tr><td>🏕 Кемпинг</td><td>7 ночей × 1 000 ₽</td><td>7 000 ₽</td></tr>
+                    <tr><td>🍽 Питание</td><td>Завтраки, обеды, ужины</td><td>≈10 800 ₽</td></tr>
+                    <tr><td>⛽ Бензин</td><td>1 800 км, 7л/100км, 55₽/л</td><td>≈6 930 ₽</td></tr>
+                    <tr><td>🥫 Продукты</td><td>Каши, консервы, чай</td><td>3 000 ₽</td></tr>
+                    <tr><td>🛒 Мелочи</td><td>Вода, салфетки, сувениры</td><td>2 000 ₽</td></tr>
+                    <tr class="total-row"><td colspan="2">🎯 Итого (с запасом)</td><td>≈78 640 ₽</td></tr>
+                `;
+            }
+
+            // ----- SCROLL TO TOP -----
+            window.addEventListener('scroll', () => {
+                document.getElementById('scrollTopBtn').classList.toggle('visible', window.scrollY > 500);
+            });
+
+            // ----- ЗАПУСК -----
+            renderAttractions();
+            renderItinerary();
+            renderChecklist();
+            renderPhones();
+            renderWeather();
+            renderPhotoAlbum();
+            renderBudget();
+        })();
+    </script>
+</body>
+</html>

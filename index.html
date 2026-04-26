@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Уральский трек 2026 | Экспедиция</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&family=Montserrat:wght@700..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --primary: #1a3b1a;
+            --accent: #e6bc7e;
+            --bg: #f4f7f0;
+            --card-bg: #fffefb;
+            --text: #1e2f1c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(26, 59, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 3px solid var(--accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 25px; }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; }
+        .logo { 
+            font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.6rem; 
+            color: var(--accent); display: flex; align-items: center; gap: 12px;
+        }
+        nav ul { display: flex; gap: 20px; list-style: none; }
+        nav a { 
+            color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            padding: 8px 16px; border-radius: 30px; transition: 0.3s;
+        }
+        nav a:hover { background: var(--accent); color: var(--primary); }
+
+        /* HERO */
+        .hero { 
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('turgoyak_lake.jpg.jpg');
+            background-size: cover; background-position: center;
+            height: 70vh; display: flex; align-items: center; justify-content: center;
+            text-align: center; color: #white; flex-direction: column;
+        }
+        .hero h1 { 
+            font-family: 'Montserrat', sans-serif; font-size: 4rem; color: #fff;
+            text-shadow: 0 5px 20px rgba(0,0,0,0.5); margin-bottom: 15px;
+        }
+        .hero-stats { 
+            display: flex; gap: 30px; margin-top: 40px; flex-wrap: wrap; justify-content: center;
+        }
+        .stat { 
+            background: rgba(255,255,255,0.15); backdrop-filter: blur(10px);
+            padding: 20px 40px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; transition: 0.3s;
+        }
+        .stat:hover { transform: translateY(-5px); background: rgba(255,255,255,0.25); }
+        .stat-val { display: block; font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+
+        /* MAP */
+        .section { padding: 80px 0; }
+        .title-block { text-align: center; margin-bottom: 50px; }
+        .title-block h2 { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; position: relative; display: inline-block; }
+        .title-block h2::after { content: ''; display: block; width: 60px; height: 4px; background: var(--accent); margin: 10px auto; }
+
+        #map-container { 
+            height: 600px; border-radius: 40px; border: 8px solid #fff; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); overflow: hidden;
+        }
+        #map { width: 100%; height: 100%; }
+
+        /* ATTRACTIONS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+        .card { 
+            background: var(--card-bg); border-radius: 35px; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05); transition: 0.4s ease; border: 1px solid #eee;
+        }
+        .card:hover { transform: translateY(-15px); box-shadow: 0 25px 45px rgba(0,0,0,0.12); }
+        .card-img { height: 250px; position: relative; overflow: hidden; }
+        .card-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card:hover img { transform: scale(1.1); }
+        .badge { 
+            position: absolute; top: 20px; left: 20px; background: var(--primary);
+            color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;
+        }
+        .card-body { padding: 30px; }
+        .card-body h3 { margin-bottom: 12px; font-size: 1.5rem; color: var(--primary); }
+        .links { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn-link { 
+            text-decoration: none; font-size: 0.8rem; font-weight: 700; padding: 10px 20px;
+            border-radius: 50px; transition: 0.3s;
+        }
+        .yandex { background: #fff1e0; color: #b27a3a; }
+        .info { background: #f0f0f0; color: #555; }
+        .btn-link:hover { opacity: 0.8; transform: scale(1.05); }
+
+        /* DAYS */
+        .day-box { 
+            background: #fff; border-radius: 25px; margin-bottom: 20px; overflow: hidden; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02); border: 1px solid #eee;
+        }
+        .day-head { 
+            background: #fdfdfd; padding: 25px 35px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .day-head:hover { background: #f8f9f5; }
+        .day-num { 
+            background: var(--primary); color: var(--accent); width: 45px; height: 45px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 1.2rem; margin-right: 20px;
+        }
+        .day-info h4 { font-size: 1.3rem; margin-bottom: 4px; }
+        .day-content { display: none; padding: 35px; border-top: 1px solid #f0f0f0; background: #fafbfc; }
+        .day-content.active { display: block; animation: fadeIn 0.5s ease; }
+        
+        .timeline { border-left: 2px dashed var(--accent); margin-left: 10px; padding-left: 30px; position: relative; }
+        .item { position: relative; margin-bottom: 25px; }
+        .item::before { 
+            content: ''; position: absolute; left: -37px; top: 5px; width: 12px; height: 12px;
+            background: var(--accent); border-radius: 50%; border: 3px solid #fff;
+        }
+        .time { font-weight: 800; color: #b96f20; font-size: 0.85rem; display: block; margin-bottom: 3px; }
+
+        /* BUDGET */
+        .budget-grid { 
+            background: #fff; border-radius: 35px; overflow: hidden; border: 1px solid #eee;
+        }
+        .b-item { display: grid; grid-template-columns: 2fr 1fr 2fr; padding: 20px 35px; border-bottom: 1px solid #f5f5f5; }
+        .b-head { background: var(--primary); color: #fff; font-weight: 700; }
+        .b-total { background: var(--accent); color: var(--primary); font-weight: 900; font-size: 1.4rem; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ICONS */
+        .icon { width: 24px; height: 24px; fill: var(--accent); transition: 0.3s; }
+        .nav-item:hover .icon { transform: rotate(15deg) scale(1.2); }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .b-item { grid-template-columns: 1fr; gap: 10px; }
+            .b-head { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container header-flex">
+        <div class="logo">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zM12 18l-5-4h10l-5 4z"/></svg>
+            УРАЛЬСКИЙ ТРЕК
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#map-sec">Карта</a></li>
+                <li><a href="#places">Места</a></li>
+                <li><a href="#route">Маршрут</a></li>
+                <li><a href="#budget">Бюджет</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="hero">
+    <h1>ТУРГОЯК 2026</h1>
+    <p>Большая экспедиция в сердце Южного Урала: 2650 км приключений</p>
+    <div class="hero-stats">
+        <div class="stat"><span class="stat-val">2650 км</span>пути</div>
+        <div class="stat"><span class="stat-val">10 дней</span>в дороге</div>
+        <div class="stat"><span class="stat-val">78 640 ₽</span>бюджет</div>
+    </div>
+</div>
+
+<section id="map-sec" class="section">
+    <div class="container">
+        <div class="title-block"><h2>Интерактивная карта</h2></div>
+        <div id="map-container"><div id="map"></div></div>
+    </div>
+</section>
+
+<section id="places" class="section">
+    <div class="container">
+        <div class="title-block"><h2>Ключевые локации</h2></div>
+        <div class="grid" id="attractionsGrid"></div>
+    </div>
+</section>
+
+<section id="route" class="section">
+    <div class="container">
+        <div class="title-block"><h2>График по дням</h2></div>
+        <div id="daysContainer"></div>
+    </div>
+</section>
+
+<section id="budget" class="section">
+    <div class="container">
+        <div class="title-block"><h2>Детальные расходы</h2></div>
+        <div class="budget-grid">
+            <div class="b-item b-head"><div>Категория</div><div>Сумма</div><div>Описание</div></div>
+            <div class="b-item"><div>⛽ Топливо</div><div>12 640 ₽</div><div>Расчет на 2650 км (АИ-95)</div></div>
+            <div class="b-item"><div>🏨 Жилье</div><div>14 900 ₽</div><div>Кемпинги и отели</div></div>
+            <div class="b-item"><div>🍽 Еда</div><div>35 000 ₽</div><div>Кафе + закупка продуктов</div></div>
+            <div class="b-item"><div>🎫 Развлечения</div><div>7 200 ₽</div><div>Парки, лодки, музеи</div></div>
+            <div class="b-item"><div>🛍 Прочее</div><div>6 200 ₽</div><div>Сувениры, аптечка</div></div>
+            <div class="b-item b-total"><div>ИТОГО</div><div>78 640 ₽</div><div>~26 213 ₽ на человека</div></div>
+        </div>
+    </div>
+</section>
+
+<footer style="background: var(--primary); color: #fff; padding: 50px 0; text-align: center;">
+    <div class="container">
+        <p>© 2026 Экспедиция: Андрей, Наташа, Ира</p>
+    </div>
+</footer>
+
+<script>
+// ПОЛНЫЕ ДАННЫЕ ИЗ ТВОЕГО ФАЙЛА
+const daysData = [
+    { day:1, route:"Южа → Чебоксары", dist:"350 км", sum:"8 119 ₽", events:[
+        {t:"07:00", d:"Сборы, завтрак дома"},
+        {t:"08:00", d:"Выезд из Южи"},
+        {t:"12:00", d:"Обед в кафе «У Митрича» (М7)"},
+        {t:"17:00", d:"Прогулка по заливу в Чебоксарах"},
+        {t:"19:30", d:"Ужин в «Чувашской усадьбе»"}
+    ]},
+    { day:2, route:"Чебоксары → Сатка", dist:"600 км", sum:"5 862 ₽", events:[
+        {t:"08:00", d:"Выезд, перегон через Татарстан"},
+        {t:"13:30", d:"Обед в кафе «Биляр» (эчпочмаки)"},
+        {t:"17:00", d:"Фото у стелы Европа-Азия"},
+        {t:"19:30", d:"Ужин в кафе «Башня» (Сатка)"}
+    ]},
+    { day:3, route:"Притёсы и Пещеры", dist:"150 км", sum:"2 224 ₽", events:[
+        {t:"10:00", d:"Большие Айские Притёсы"},
+        {t:"14:00", d:"Сикияз-Тамак (пещерный город)"},
+        {t:"18:00", d:"Установка лагеря на Тургояке"}
+    ]},
+    { day:4, route:"Тургояк: Релакс", dist:"-", sum:"2 866 ₽", events:[
+        {t:"10:00", d:"Купание в кристальной воде"},
+        {t:"14:00", d:"Прогулка по берегу"},
+        {t:"19:00", d:"Ужин у костра (плов)"}
+    ]},
+    { day:5, route:"Остров Веры", dist:"лодка", sum:"6 700 ₽", events:[
+        {t:"10:00", d:"Катер на остров"},
+        {t:"11:30", d:"Осмотр мегалитов (6000 лет)"},
+        {t:"16:00", d:"Подъем на смотровую площадку"}
+    ]},
+    { day:6, route:"Миасс и Пельмени", dist:"40 км", sum:"7 193 ₽", events:[
+        {t:"11:00", d:"Музей пельменя (дом Смирнова)"},
+        {t:"12:30", d:"Дегустация 6 видов пельменей"},
+        {t:"15:00", d:"Закупка провианта в Миассе"}
+    ]},
+    { day:7, route:"Таганай", dist:"80 км", sum:"9 274 ₽", events:[
+        {t:"10:00", d:"Вход в НП Таганай"},
+        {t:"13:00", d:"Восхождение на Чёрную скалу"},
+        {t:"18:00", d:"Возвращение в лагерь"}
+    ]},
+    { day:8, route:"Тургояк → Чебоксары", dist:"600 км", sum:"9 112 ₽", events:[
+        {t:"09:00", d:"Выезд, обратный перегон"},
+        {t:"14:00", d:"Обед в районе Сима"},
+        {t:"20:00", d:"Ночлег в Чебоксарах"}
+    ]},
+    { day:9, route:"Нижний Новгород", dist:"250 км", sum:"5 925 ₽", events:[
+        {t:"13:00", d:"Прибытие в НН"},
+        {t:"16:00", d:"Кремль и Чкаловская лестница"},
+        {t:"19:00", d:"Ужин в «Пяткине»"}
+    ]},
+    { day:10, route:"Домой", dist:"200 км", sum:"1 854 ₽", events:[
+        {t:"10:00", d:"Выезд из НН"},
+        {t:"13:00", d:"Прибытие в Южу"}
+    ]}
+];
+
+// ТВОИ ФОТО И ДАННЫЕ
+const attractions = [
+    { n:"Большие Притёсы", b:"Природа", d:"100-метровые скалы над р. Ай", img:"pritesy.jpg.jpg", c:[54.95, 58.25], link:"https://2gis.ru/miass/geo/70030076387007692" },
+    { n:"Озеро Тургояк", b:"Озеро", d:"Жемчужина Урала", img:"turgoyak_lake.jpg.jpg", c:[55.17, 60.10], link:"https://miass.ru/slovari.html?article=1151" },
+    { n:"Остров Веры", b:"История", d:"Древние мегалиты", img:"ostrov_very.jpg.jpg", c:[55.16, 60.08], link:"https://dzen-tour.ru/stories/2377/" },
+    { n:"Музей Пельменя", b:"Еда", d:"Дом купца Смирнова", img:"museum_pelmen.jpg.jpg", c:[55.05, 60.11], link:"https://vmiass.ru/myzeypelmenya" },
+    { n:"Таганай", b:"Горы", d:"Нацпарк, горные хребты", img:"taganay.jpg.jpg", c:[55.17, 59.65], link:"https://www.taganay.org/" }
+];
+
+function initApp() {
+    // Рендер мест
+    document.getElementById('attractionsGrid').innerHTML = attractions.map(a => `
+        <div class="card">
+            <div class="card-img"><span class="badge">${a.b}</span><img src="${a.img}"></div>
+            <div class="card-body">
+                <h3>${a.n}</h3><p>${a.d}</p>
+                <div class="links">
+                    <a href="https://yandex.ru/maps/?pt=${a.c[1]},${a.c[0]}&z=14" target="_blank" class="btn-link yandex">📍 Карты</a>
+                    <a href="${a.link}" target="_blank" class="btn-link info">🔗 Подробно</a>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    // Рендер дней
+    document.getElementById('daysContainer').innerHTML = daysData.map((d, i) => `
+        <div class="day-box">
+            <div class="day-head" onclick="document.getElementById('c${i}').classList.toggle('active')">
+                <div style="display:flex; align-items:center;">
+                    <div class="day-num">${d.day}</div>
+                    <div class="day-info"><h4>${d.route}</h4><small>${d.dist}</small></div>
+                </div>
+                <div style="font-weight:700; color:var(--primary)">${d.sum}</div>
+            </div>
+            <div class="day-content" id="c${i}">
+                <div class="timeline">${d.events.map(e => `<div class="item"><span class="time">${e.t}</span>${e.d}</div>`).join('')}</div>
+            </div>
+        </div>
+    `).join('');
+
+    // Карта
+    const map = L.map('map').setView([55.5, 52], 6);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    const route = [[56.9,42], [56.1,47.2], [54.9,58.2], [55.1,60.1], [55.1,59.6], [56.3,44], [56.9,42]];
+    L.polyline(route, {color: '#e6bc7e', weight: 6, opacity: 0.8}).addTo(map);
+    
+    attractions.forEach(a => L.marker(a.c).addTo(map).bindPopup(`<b>${a.n}</b>`));
+}
+
+document.addEventListener('DOMContentLoaded', initApp);
+</script>
+</body>
+</html>
